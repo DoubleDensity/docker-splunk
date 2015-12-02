@@ -54,8 +54,10 @@ RUN mkdir -p /opt/splunk/etc/system/local
 
 COPY inputs.conf /opt/splunk/etc/system/local/inputs.conf
 
-# Configurations folder, var folder for everyting (indexes, logs, kvstore)
-VOLUME [ "/opt/splunk/etc", "/opt/splunk/var" ]
+RUN sed -i -e s/allowRemoteLogin=requireSetPassword/allowRemoteLogin=always/g /opt/splunk/etc/system/default/server.conf
+
+# var folder for everyting (indexes, logs, kvstore)
+VOLUME [ "/opt/splunk/var" ]
 
 ENTRYPOINT ["/sbin/entrypoint.sh"]
 CMD ["start-service"]
