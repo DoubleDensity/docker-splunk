@@ -54,7 +54,7 @@ RUN mkdir -p /opt/splunk/etc/system/local
 
 COPY inputs.conf /opt/splunk/etc/system/local/inputs.conf
 
-#RUN sed -i -e s/allowRemoteLogin=requireSetPassword/allowRemoteLogin=always/g /opt/splunk/etc/system/default/server.conf
+COPY server.conf /opt/splunk/etc/system/local/server.conf
 
 # var folder for everyting (indexes, logs, kvstore)
 VOLUME [ "/opt/splunk/var" ]
