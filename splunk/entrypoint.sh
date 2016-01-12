@@ -3,8 +3,8 @@
 set -e
 
 # If NFS parameters are passed in then try to mount the target
-if [ -z "$NFS_EXPORT" ] && [ -z "$NFS_MOUNT" ]; then
-    if [ -e ${$NFS_MOUNT} ]; then
+if [ -n "${NFS_EXPORT+set}" ] && [ -n "${NFS_MOUNT+set}" ]; then
+    if [ -e ${NFS_MOUNT} ]; then
         mount -t nfs $NFS_EXPORT $NFS_MOUNT
     else
         mkdir $NFS_MOUNT
