@@ -26,7 +26,7 @@ RUN apt-get install -y libgssapi-krb5-2
 
 # Download official Splunk release, verify checksum and unzip in /opt/splunk
 # Also backup etc folder, so it will be later copied to the linked volume
-RUN apt-get install -y wget \
+RUN apt-get install -y wget nfs-common \
     && mkdir -p ${SPLUNK_HOME} \
     && wget -qO /tmp/${SPLUNK_FILENAME} https://download.splunk.com/products/splunk/releases/${SPLUNK_VERSION}/${SPLUNK_PRODUCT}/linux/${SPLUNK_FILENAME} \
     && wget -qO /tmp/${SPLUNK_FILENAME}.md5 https://download.splunk.com/products/splunk/releases/${SPLUNK_VERSION}/${SPLUNK_PRODUCT}/linux/${SPLUNK_FILENAME}.md5 \
@@ -55,6 +55,8 @@ RUN mkdir -p /opt/splunk/etc/system/local
 COPY inputs.conf /opt/splunk/etc/system/local/inputs.conf
 
 COPY server.conf /opt/splunk/etc/system/local/server.conf
+
+COPY indexes.conf /opt/splunk/etc/system/local/indexes.conf
 
 # var folder for everyting (indexes, logs, kvstore)
 VOLUME [ "/opt/splunk/var" ]
