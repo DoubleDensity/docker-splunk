@@ -5,9 +5,12 @@ set -e
 # If NFS parameters are passed in then try to mount the target
 if [ -n "${NFS_EXPORT+set}" ] && [ -n "${NFS_MOUNT+set}" ]; then
     if [ -e ${NFS_MOUNT} ]; then
+        echo "Attempting to mount ${NFS_EXPORT} to ${NFS_MOUNT}"
         mount -t nfs $NFS_EXPORT $NFS_MOUNT
     else
-        mkdir $NFS_MOUNT
+        echo "Creating ${NFS_MOUNT}"
+        mkdir -p $NFS_MOUNT
+        echo "Attempting to mount ${NFS_EXPORT} to ${NFS_MOUNT}"
         mount -t nfs $NFS_EXPORT $NFS_MOUNT
     fi
     
@@ -18,17 +21,22 @@ if [ -n "${NFS_EXPORT+set}" ] && [ -n "${NFS_MOUNT+set}" ]; then
     if [ ! -e ${NFS_MOUNT}/cold ]; then
         mkdir ${NFS_MOUNT}/cold
     fi
+    if [ ! -e ${NFS_MOUNT}/thawed ]; then
+        mkdir ${NFS_MOUNT}/thawed
+    fi  
+    
+    chown -R ${SPLUNK_USER}:${SPLUNK_GROUP} ${NFS_MOUNT}/*
+    chmod -R 775 ${NFS_MOUNT}/*
     
     # Populate defaults for NFS storage in local index.conf
     echo "[nfsindex]" > ${SPLUNK_HOME}/etc/system/local/indexes.conf
     echo "homePath=${NFS_MOUNT}/hotwarm" >> ${SPLUNK_HOME}/etc/system/local/indexes.conf
     echo "coldPath=${NFS_MOUNT}/cold" >> ${SPLUNK_HOME}/etc/system/local/indexes.conf
+    echo "thawedPath=${NFS_MOUNT}/thawed" >> ${SPLUNK_HOME}/etc/system/local/indexes.conf
     
     # Set our default input to use this index
-    echo "index = [nfsindex]" >> ${SPLUNK_HOME}/etc/system/local/inputs.conf
+    echo "index = nfsindex" >> ${SPLUNK_HOME}/etc/system/local/inputs.conf
 fi
-
-
 
 if [ "$1" = 'splunk' ]; then
   shift
