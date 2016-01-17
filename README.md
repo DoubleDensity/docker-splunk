@@ -105,12 +105,20 @@ This image has two data volumes
 * `/opt/splunk/etc` - stores Splunk configurations, including applications and lookups
 * `/opt/splunk/var` - stores indexed data, logs and internal Splunk data
 
-Preliminary support for utilizing an external NFSv4 mountpoint can be used by passing in the NFS_EXPORT and NFS_MOUNT variables
+Preliminary support for utilizing an external NFSv3/v4 mountpoint can be used by passing in the NFS_EXPORT and NFS_MOUNT variables
+
+If the INDEX_NAME parater is passed as well then a Splunk index will be defined using this storage location. Additionally the index settings my be adjusted by passing in the maxWarmDBCount and maxTotalDataSizeMB parameters.
 
 * `NFS_MOUNT` - the full path to the NFS export you would like to use for index storage, ex: 192.168.69.71:/stornext/snfs1/splunk
 * `NFS_EXPORT` - the local path to mount to inside the container, ex: /mnt/splunk
+* `INDEX_NAME` - the name of the Splunk index to be defined to utilize the NFS mount points
 
-docker run --hostname splunk --privileged -e "NFS_EXPORT=192.168.69.71:/stornext/snfs1/splunk" -e NFS_MOUNT="/mnt/splunk" -p 8000:8000 -p 3514:3514/udp quay.io/doubledensity/splunk
+For more detail on these index parameters please see [Deploy:BucketRotationAndRetention](https://wiki.splunk.com/Deploy:BucketRotationAndRetention)
+
+* `maxWarmDBCount` - controls bucket rolling behavior from warm to cold
+* `maxTotalDataSizeMB` - the maximum size of all buckets in the index
+
+docker run --hostname splunk --privileged -e "NFS_EXPORT=192.168.69.71:/stornext/snfs1/splunk" -e NFS_MOUNT="/mnt/splunk" -e INDEX_NAME="nfsindex" -e maxWarmDBCount="1" -e maxTotalDataSizeMB="128000" -p 8000:8000 -p 3514:3514/udp quay.io/doubledensity/splunk
 
 ### User
 
