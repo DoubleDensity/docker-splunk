@@ -3,8 +3,8 @@ FROM ubuntu:trusty
 MAINTAINER Denis Gladkikh <docker-splunk@denis.gladkikh.email>
 
 ENV SPLUNK_PRODUCT splunk
-ENV SPLUNK_VERSION 6.3.1
-ENV SPLUNK_BUILD f3e41e4b37b2
+ENV SPLUNK_VERSION 6.3.2
+ENV SPLUNK_BUILD aaff59bb082c
 ENV SPLUNK_FILENAME splunk-${SPLUNK_VERSION}-${SPLUNK_BUILD}-Linux-x86_64.tgz
 
 ENV SPLUNK_HOME /opt/splunk
@@ -26,7 +26,7 @@ RUN apt-get install -y libgssapi-krb5-2
 
 # Download official Splunk release, verify checksum and unzip in /opt/splunk
 # Also backup etc folder, so it will be later copied to the linked volume
-RUN apt-get install -y wget \
+RUN apt-get install -y wget nfs-common \
     && mkdir -p ${SPLUNK_HOME} \
     && wget -qO /tmp/${SPLUNK_FILENAME} https://download.splunk.com/products/splunk/releases/${SPLUNK_VERSION}/${SPLUNK_PRODUCT}/linux/${SPLUNK_FILENAME} \
     && wget -qO /tmp/${SPLUNK_FILENAME}.md5 https://download.splunk.com/products/splunk/releases/${SPLUNK_VERSION}/${SPLUNK_PRODUCT}/linux/${SPLUNK_FILENAME}.md5 \
@@ -42,6 +42,9 @@ RUN apt-get install -y wget \
     && chown -R ${SPLUNK_USER}:${SPLUNK_GROUP} ${SPLUNK_BACKUP_DEFAULT_ETC} \
     && rm -rf /var/lib/apt/lists/*
 
+# Update nfs-common to enable statd in case the nfs mount is v3
+RUN sed -i.bak s/NEED_STATD=/NEED_STATD=yes/g /etc/default/nfs-common
+
 COPY entrypoint.sh /sbin/entrypoint.sh
 RUN chmod +x /sbin/entrypoint.sh
 
@@ -55,6 +58,8 @@ RUN mkdir -p /opt/splunk/etc/system/local
 COPY inputs.conf /opt/splunk/etc/system/local/inputs.conf
 
 COPY server.conf /opt/splunk/etc/system/local/server.conf
+
+COPY indexes.conf /opt/splunk/etc/system/local/indexes.conf
 
 # var folder for everyting (indexes, logs, kvstore)
 VOLUME [ "/opt/splunk/var" ]
