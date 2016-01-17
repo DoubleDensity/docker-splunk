@@ -118,7 +118,11 @@ For more detail on these index parameters please see [Deploy:BucketRotationAndRe
 * `maxWarmDBCount` - controls bucket rolling behavior from warm to cold
 * `maxTotalDataSizeMB` - the maximum size of all buckets in the index
 
+You can execute Splunk with the NFS parameters like this
+
+```
 docker run --hostname splunk --privileged -e "NFS_EXPORT=192.168.69.71:/stornext/snfs1/splunk" -e NFS_MOUNT="/mnt/splunk" -e INDEX_NAME="nfsindex" -e maxWarmDBCount="1" -e maxTotalDataSizeMB="128000" -p 8000:8000 -p 3514:3514/udp quay.io/doubledensity/splunk
+```
 
 ### User
 
