@@ -2,6 +2,9 @@
 
 set -e
 
+# Start rpcbind for NFSv3 mounts
+service rpcbind start
+
 # If NFS parameters are passed in then try to mount the target
 if [ -n "${NFS_EXPORT+set}" ] && [ -n "${NFS_MOUNT+set}" ]; then
     if [ -e ${NFS_MOUNT} ]; then
@@ -12,30 +15,39 @@ if [ -n "${NFS_EXPORT+set}" ] && [ -n "${NFS_MOUNT+set}" ]; then
         mkdir -p $NFS_MOUNT
         echo "Attempting to mount ${NFS_EXPORT} to ${NFS_MOUNT}"
         mount -t nfs $NFS_EXPORT $NFS_MOUNT
-    fi
+    fi    
     
-    # Create bucket dirs if they don't already exist
-    if [ ! -e ${NFS_MOUNT}/hotwarm ]; then
-        mkdir ${NFS_MOUNT}/hotwarm
-    fi
-    if [ ! -e ${NFS_MOUNT}/cold ]; then
-        mkdir ${NFS_MOUNT}/cold
-    fi
-    if [ ! -e ${NFS_MOUNT}/thawed ]; then
-        mkdir ${NFS_MOUNT}/thawed
-    fi  
+    if [ -n "${INDEX_NAME+set}" ]; then
+        # Create bucket dirs if they don't already exist
+        if [ ! -e ${NFS_MOUNT}/hotwarm ]; then
+            mkdir ${NFS_MOUNT}/hotwarm
+        fi
+        if [ ! -e ${NFS_MOUNT}/cold ]; then
+            mkdir ${NFS_MOUNT}/cold
+        fi
+        if [ ! -e ${NFS_MOUNT}/thawed ]; then
+            mkdir ${NFS_MOUNT}/thawed
+        fi  
     
-    chown -R ${SPLUNK_USER}:${SPLUNK_GROUP} ${NFS_MOUNT}/*
-    chmod -R 775 ${NFS_MOUNT}/*
+        chown -R ${SPLUNK_USER}:${SPLUNK_GROUP} ${NFS_MOUNT}/*
+        chmod -R 775 ${NFS_MOUNT}/*
+                   
+        # Populate defaults for NFS storage in local index.conf
+        echo "[${INDEX_NAME}]" > ${SPLUNK_HOME}/etc/system/local/indexes.conf
+        echo "homePath=${NFS_MOUNT}/hotwarm" >> ${SPLUNK_HOME}/etc/system/local/indexes.conf
+        echo "coldPath=${NFS_MOUNT}/cold" >> ${SPLUNK_HOME}/etc/system/local/indexes.conf
+        echo "thawedPath=${NFS_MOUNT}/thawed" >> ${SPLUNK_HOME}/etc/system/local/indexes.conf
+        
+        if [ -n "${maxWarmDBCount+set}" ]; then
+            echo "maxWarmDBCount=${maxWarmDBCount}" >> ${SPLUNK_HOME}/etc/system/local/indexes.conf
+        fi        
+        if [ -n "${maxTotalDataSizeMB+set}" ]; then
+            echo "maxTotalDataSizeMB=${maxTotalDataSizeMB}" >> ${SPLUNK_HOME}/etc/system/local/indexes.conf
+        fi
     
-    # Populate defaults for NFS storage in local index.conf
-    echo "[nfsindex]" > ${SPLUNK_HOME}/etc/system/local/indexes.conf
-    echo "homePath=${NFS_MOUNT}/hotwarm" >> ${SPLUNK_HOME}/etc/system/local/indexes.conf
-    echo "coldPath=${NFS_MOUNT}/cold" >> ${SPLUNK_HOME}/etc/system/local/indexes.conf
-    echo "thawedPath=${NFS_MOUNT}/thawed" >> ${SPLUNK_HOME}/etc/system/local/indexes.conf
-    
-    # Set our default input to use this index
-    echo "index = nfsindex" >> ${SPLUNK_HOME}/etc/system/local/inputs.conf
+        # Set our default input to use this index
+        echo "index = nfsindex" >> ${SPLUNK_HOME}/etc/system/local/inputs.conf
+     fi
 fi
 
 if [ "$1" = 'splunk' ]; then

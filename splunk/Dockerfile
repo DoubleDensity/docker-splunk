@@ -42,6 +42,9 @@ RUN apt-get install -y wget nfs-common \
     && chown -R ${SPLUNK_USER}:${SPLUNK_GROUP} ${SPLUNK_BACKUP_DEFAULT_ETC} \
     && rm -rf /var/lib/apt/lists/*
 
+# Update nfs-common to enable statd in case the nfs mount is v3
+RUN sed -i.bak s/NEED_STATD=/NEED_STATD=yes/g /etc/default/nfs-common
+
 COPY entrypoint.sh /sbin/entrypoint.sh
 RUN chmod +x /sbin/entrypoint.sh
 
