@@ -61,6 +61,8 @@ COPY server.conf /opt/splunk/etc/system/local/server.conf
 
 COPY indexes.conf /opt/splunk/etc/system/local/indexes.conf
 
+COPY props.conf /opt/splunk/etc/system/local/props.conf
+
 # var folder for everyting (indexes, logs, kvstore)
 VOLUME [ "/opt/splunk/var" ]
 
