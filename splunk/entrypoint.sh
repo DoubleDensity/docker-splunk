@@ -50,18 +50,14 @@ if [ -n "${NFS_EXPORT+set}" ] && [ -n "${NFS_MOUNT+set}" ]; then
      fi
 fi
 
-if [ -n "${FSCK+set}" ]; then
-	echo "Offline fsck requested!"
-	echo "Copying default Splunk configs from /tmp to /opt/splunk/etc"
-	cp -v /tmp/splunk-launch.conf /opt/splunk/etc
-	mkdir -p /opt/splunk/etc/myinstall/
-	cp -v /tmp/splunkd.xml.cfg-default /opt/splunk/etc/myinstall/
-	cp -v /tmp/splunkd.xml.cfg-default /opt/splunk/etc/myinstall/splunkd.xml
-	chown -R splunk.splunk /opt/splunk/etc/myinstall/
-	chmod 644 /opt/splunk/etc/myinstall/splunkd.xml.cfg-default
-	chmod 644 /opt/splunk/etc/myinstall/splunkd.xml
-	${SPLUNK_HOME}/bin/splunk fsck repair --all-buckets-all-indexes
-	exit 0;
+if [ -n "${FSCK+set}" ] && [ -n "${NFS_EXPORT+set}" ] && [ -n "${NFS_MOUNT+set}" ] && [ -n "${INDEX_NAME+set}" ]; then
+	echo "Offline fsck of NFS index requested!"
+	echo "Extracting fakeroot.tar.gz for temporary Splunk operating environment..."
+    cd /opt/splunk
+    tar zxfp fakeroot.tar.gz
+    cat ${SPLUNK_HOME}/etc/system/local/indexes.conf
+	sudo -HEu ${SPLUNK_USER} ${SPLUNK_HOME}/bin/splunk fsck repair --debug -v --all-buckets-one-index --index-name=${INDEX_NAME}
+    exit 0;
 fi
 
 if [ "$1" = 'splunk' ]; then

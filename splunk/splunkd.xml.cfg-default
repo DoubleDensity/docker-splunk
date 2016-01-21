@@ -1,5 +1,5 @@
 <!--   Version 4.0 -->
-
+                                                                                                                                       
 
 <!-- splunkd.xml -->
 <!-- This file is the default main configuration file for the Splunk server  -->
@@ -15,7 +15,7 @@
 		<!-- NOTE: serverName is not set in this file anymore.  Instead, -->
 		<!--       set serverName under [general] in server.conf.        -->
 
-		<pipeline name="indexerPipe">
+		<pipeline name="indexerPipe"> 
                          <processor name="indexIn" plugin="queueinputprocessor">
                          	   <config>
                          		<queueName>indexQueue</queueName>
@@ -53,8 +53,8 @@
                          <processor name="indexer" plugin="indexprocessor">
 			           <config></config>
                          </processor>
-                </pipeline>
-
+                </pipeline>      
+                                
                 <!-- this pipeline will throw away any events passed to it -->
                 <pipeline name="dev-null">
                         <processor name="nullQueue" plugin="queueinputprocessor">
