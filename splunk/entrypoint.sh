@@ -52,6 +52,8 @@ fi
 
 if [ -n "${FSCK+set}" ]; then
 	echo "Offline fsck requested"
+	echo "Copying default splunk-launch.conf from /tmp to /opt/splunk/etc"
+	cp -v /tmp/splunk-launch.conf /opt/splunk/etc
 	${SPLUNK_HOME}/bin/splunk fsck repair --all-buckets-all-indexes
 	exit 0;
 fi
