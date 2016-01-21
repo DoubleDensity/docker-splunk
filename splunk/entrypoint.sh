@@ -51,6 +51,7 @@ if [ -n "${NFS_EXPORT+set}" ] && [ -n "${NFS_MOUNT+set}" ]; then
 fi
 
 if [ -n ${FSCK+set} ]; then
+	echo "Offline fsck requested"
 	${SPLUNK_HOME}/bin/splunk fsck repair --all-buckets-all-indexes
 	exit 0;
 fi
