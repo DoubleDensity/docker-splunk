@@ -56,7 +56,8 @@ if [ -n "${FSCK+set}" ]; then
 	cp -v /tmp/splunk-launch.conf /opt/splunk/etc
 	mkdir -p /opt/splunk/etc/myinstall/
 	cp -v /tmp/splunkd.xml.cfg-default /opt/splunk/etc/myinstall/
-	chmod -R 777 /opt/splunk/etc/myinstall/
+	chown -R splunk.splunk /opt/splunk/etc/myinstall/
+	chmod 644 /opt/splunk/etc/myinstall/splunkd.xml.cfg-default
 	${SPLUNK_HOME}/bin/splunk fsck repair --all-buckets-all-indexes
 	exit 0;
 fi
