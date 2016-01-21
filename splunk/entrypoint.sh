@@ -50,7 +50,7 @@ if [ -n "${NFS_EXPORT+set}" ] && [ -n "${NFS_MOUNT+set}" ]; then
      fi
 fi
 
-if [ -e ${FSCK} ]; then
+if [ -n ${FSCK} ]; then
 	${SPLUNK_HOME}/bin/splunk fsck repair --all-buckets-all-indexes
 	exit 0;
 fi
