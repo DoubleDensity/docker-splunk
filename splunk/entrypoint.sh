@@ -50,6 +50,11 @@ if [ -n "${NFS_EXPORT+set}" ] && [ -n "${NFS_MOUNT+set}" ]; then
      fi
 fi
 
+if [ -e ${FSCK} ]; then
+	${SPLUNK_HOME}/bin/splunk fsck repair --all-buckets-all-indexes
+	exit 0;
+fi
+
 if [ "$1" = 'splunk' ]; then
   shift
   sudo -HEu ${SPLUNK_USER} ${SPLUNK_HOME}/bin/splunk "$@"
