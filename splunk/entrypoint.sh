@@ -56,8 +56,13 @@ if [ -n "${FSCK+set}" ] && [ -n "${NFS_EXPORT+set}" ] && [ -n "${NFS_MOUNT+set}"
     cd /opt/splunk
     tar zxfp fakeroot.tar.gz
     cat ${SPLUNK_HOME}/etc/system/local/indexes.conf
-	sudo -HEu ${SPLUNK_USER} ${SPLUNK_HOME}/bin/splunk fsck repair --debug --v --all-buckets-one-index --index-name=${INDEX_NAME}
-    exit 0;
+	if [ "$FSCK" = 'scan' ]; then
+		sudo -HEu ${SPLUNK_USER} ${SPLUNK_HOME}/bin/splunk fsck scan --debug --v --all-buckets-one-index --index-name=${INDEX_NAME}
+    	exit 0;
+	elif [ "$FSCK" = 'repair' ]; then	
+		sudo -HEu ${SPLUNK_USER} ${SPLUNK_HOME}/bin/splunk fsck repair --debug --v --backfill-never --ignore-read-error --all-buckets-one-index --index-name=${INDEX_NAME}
+    	exit 0;
+	fi
 fi
 
 if [ "$1" = 'splunk' ]; then
