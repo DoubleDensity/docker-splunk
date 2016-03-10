@@ -63,6 +63,8 @@ COPY indexes.conf /opt/splunk/etc/system/local/indexes.conf
 
 COPY props.conf /opt/splunk/etc/system/local/props.conf
 
+COPY splunk-launch.conf /opt/splunk/etc
+
 # Copy the fake Splunk etc and var to /tmp in case needed for offline fsck
 COPY fakeroot.tar.gz /opt/splunk/fakeroot.tar.gz
 
