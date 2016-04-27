@@ -19,9 +19,9 @@
 
 Current branch:
 
-* `6.3`, `6.3.3`, `latest` - Splunk Enterprise
-* `6.3-light`, `6.3.3-light`, `latest-light` - Splunk Light
-* `6.3-forwarder`, `6.3.3-forwarder`, `latest-forwarder` - Splunk Universal Forwarder
+* `6.4`, `6.4.0`, `latest` - Splunk Enterprise
+* `6.4-light`, `6.4.0-light`, `latest-light` - Splunk Light
+* `6.4-forwarder`, `6.4.0-forwarder`, `latest-forwarder` - Splunk Universal Forwarder
 
 For previous versions or newest releases see other branches.
 
@@ -40,7 +40,7 @@ Dockerfiles to build [Splunk](https://splunk.com) including Enterpise, Light and
 
 ### Version
 
-* Version: `6.3.3`
+* Version: `6.4.0`
 * Build: `f3e41e4b37b2`
 
 ## Installation
@@ -48,7 +48,7 @@ Dockerfiles to build [Splunk](https://splunk.com) including Enterpise, Light and
 Pull the image from the [docker registry](https://registry.hub.docker.com/u/outcoldman/splunk/). This is the recommended method of installation as it is easier to update image. These builds are performed by the **Docker Trusted Build** service.
 
 ```bash
-docker pull outcoldman/splunk:6.3.3
+docker pull outcoldman/splunk:6.4.0
 ```
 
 Or you can pull latest version.
@@ -90,7 +90,7 @@ vsplunk:
     - /opt/splunk/var
 
 splunk:
-  image: outcoldman/splunk:6.3.3
+  image: outcoldman/splunk:6.4.0
   hostname: splunk
   volumes_from:
     - vsplunk
