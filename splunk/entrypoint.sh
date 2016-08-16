@@ -29,8 +29,8 @@ if [ -n "${NFS_EXPORT+set}" ] && [ -n "${NFS_MOUNT+set}" ]; then
             mkdir ${NFS_MOUNT}/thawed
         fi  
     
-        chown -R ${SPLUNK_USER}:${SPLUNK_GROUP} ${NFS_MOUNT}/*
-        chmod -R 775 ${NFS_MOUNT}/*
+        chown -R ${SPLUNK_USER}:${SPLUNK_GROUP} ${NFS_MOUNT}/* || true
+        chmod -R 775 ${NFS_MOUNT}/* || true
                    
         # Populate defaults for NFS storage in local index.conf
         echo "[${INDEX_NAME}]" > ${SPLUNK_HOME}/etc/system/local/indexes.conf
